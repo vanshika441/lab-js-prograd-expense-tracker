@@ -1,65 +1,48 @@
-let localData = localStorage.getItem('keys')
-let data = []
-let ammount = []
-let expense = 0
-let income = 0
-const list = document.getElementById('list')
-if(data == null)
-{
-console.log('data is not present')
-}
-else{
-    data =  localStorage.getItem('keys').split(',')
-    data.map((key)=>{
-       let value = localStorage.getItem(key)
-       let amt = parseInt(value)
-       ammount.push(amt)
-       let li = document.createElement('li')
-       li.setAttribute('class','plus')
-       li.innerHTML = key +"   " +value
-       list.appendChild(li)
-    })
-}
-if(ammount.length>0)
-{
-    ammount.map((value)=>{
-        if(value >0)
-        {
-            income += value
-        }
-        else{
-            expense -=value
-        }
-    })
-}
-let sum = income - expense
-document.getElementById('balance').innerHTML = '$'+sum
-document.querySelector('#money-plus').innerHTML = '+$'+income
-document.querySelector('#money-minus').innerHTML = '-$'+expense
+let addTransaction = document.querySelector(".btn");
 
-console.log(sum)
+addTransaction.addEventListener("click", () => {
+  let text = _("text").value;
+  let amt = _("amount").value;
+  if (text == "" || amt == "") {
+    alert("The Text or Amt are empty");
+  } else {
+    localStorage.setItem(text, amt);
+  }
+});
 
-expense=()=>{
-
-    let key = document.getElementById('text').value;
-    let val = document.getElementById('amount').value;
-    localStorage.setItem(key,val);
-
-    let keyArr=[]
-    if(localStorage.getItem('keys')==null)
-    {
-     keyArr.push(key)
-    }else{
-        keyArr = localStorage.getItem('keys').split(',');
-        if(keyArr.includes(key))
-        {
-
-        }
-        else{
-        keyArr.push(key)
-        }
+function history() {
+  let incomeCount = 0,
+    expenseCount = 0;
+  if (localStorage.length > 0) {
+    for (let i = 0; i < localStorage.length; i++) {
+      let text = localStorage.key(i);
+      let amt = localStorage.getItem(localStorage.key(i));
+      if (amt.includes("-")) {
+        expenseCount += Math.abs(parseFloat(amt));
+      } else {
+        incomeCount += parseFloat(amt);
+      }
+      let list = _("list");
+      let item = document.createElement("li");
+      item.classList.add(`${amt.includes("-") ? `minus` : `plus`}`);
+      let itext = document.createElement("p");
+      itext.textContent = text;
+      item.appendChild(itext);
+      let iamt = document.createElement("p");
+      iamt.textContent = `${amt.includes("-") ? `` : `+`}${amt}`;
+      item.appendChild(iamt);
+      list.appendChild(item);
     }
-   localStorage.setItem('keys',keyArr)
-   let allKeys = localStorage.getItem('keys').split(',')
-   console.log(allKeys)
+  }
+  _("money-plus").textContent = `+$${incomeCount.toFixed(2)}`;
+  _("money-minus").textContent = `-$${expenseCount.toFixed(2)}`;
+  _("balance").textContent = `$${(incomeCount - expenseCount).toFixed(2)}`;
 }
+
+function _(id) {
+  return document.getElementById(id);
+}
+
+window.onload = () => {
+  history();
+};
