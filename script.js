@@ -9,7 +9,6 @@ addTransaction.addEventListener("click", () => {
     localStorage.setItem(text, amt);
   }
 });
-
 function history() {
   let incomeCount = 0,
     expenseCount = 0;
